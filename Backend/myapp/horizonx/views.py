@@ -14,25 +14,62 @@ users_collection = db.users
 # @csrf_exempt
 # @require_http_methods(["POST"])
 def signup():
-    data = {
-        "name" : "Rishi",
-        "username" : "Temp",
-        "password" : "123",
-        "email" : "temp@gmail.com",
-        "phone" : "123456789",
-    }
-    password = data['password']
+    try:
+        data = {
+            "name" : "Rishi",
+            "username" : "Temp",
+            "password" : "123",
+            "email" : "temp@gmail.com",
+            "phone" : "123456789",
+        }
+        # data = json.loads(request.body)
+        password = data['password']
 
-    if users_collection.find_one({"username": data['username']}):
-        return JsonResponse({"error": "Username already exists"}, status=400)
+        if users_collection.find_one({"username": data['username']}):
+            return "username already exists"
+            # return JsonResponse({"error": "Username already exists"}, status=400)
 
-    hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
-    data['password'] = hashed_password
-    users_collection.insert_one(data)
+        hashed_password = bcrypt.hashpw(password.encode("utf-8"), bcrypt.gensalt())
+        data['password'] = hashed_password
+        users_collection.insert_one(data)
+    except json.JSONDecodeError:
+        return "invalid data"
+        # return JsonResponse({"error": "Invalid data"}, status=400)
 
 # @csrf_exempt
 # @require_http_methods(["POST"])
-def login(request):
-    pass
+def login():
+    try:
+        data = {
+            "username" : "Temp",
+            "password" : "123",
+        }
+        # data = json.loads(request.body)
+        username = data.get("username")
+        password = data.get("password")
 
-print(signup())
+        user = users_collection.find_one({"username": username})
+
+        if user:
+            if bcrypt.checkpw(password.encode("utf-8"), user["password"]):
+                return "Login success"
+                # return JsonResponse(
+                #     {"message": "Login successful", "username": username}, status=200
+                # )
+            else:
+                return "Invalid"
+                # return JsonResponse(
+                #     {"error": "Invalid username or password"}, status=400
+                # )
+        else:
+            return "Invalid"
+            # return JsonResponse({"error": "Invalid username or password"}, status=400)
+
+    except json.JSONDecodeError:
+        return "Invalid data"
+        # return JsonResponse({"error": "Invalid data"}, status=400)
+    except Exception as e:
+        return "Error"
+        # return JsonResponse({"error": "An error occurred during login"}, status=500)
+
+print(login())
