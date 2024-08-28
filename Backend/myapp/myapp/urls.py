@@ -16,7 +16,10 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
+from horizonx.views import login , signup
 
 urlpatterns = [
     path('admin/', admin.site.urls),
+    path('api/login', login),
+    path('api/signup', signup),
 ]
