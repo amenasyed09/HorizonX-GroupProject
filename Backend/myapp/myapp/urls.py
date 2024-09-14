@@ -25,7 +25,7 @@ urlpatterns = [
     path('api/login/', login),
     path('api/signup/', signup),
     path('api/newProperty/',create_property),
-   path('api/getAllProperties/search/<str:search_term>/', get_all_properties_by_search),
+    path('api/getAllProperties/search/<str:search_term>/', get_all_properties_by_search),
     path('api/getAllProperties/filters/', get_all_properties_by_filters),
  
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
