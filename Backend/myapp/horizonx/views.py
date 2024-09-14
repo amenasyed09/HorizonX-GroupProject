@@ -78,8 +78,7 @@ def create_property(request):
             if 'updated_date' in data:
                 data['updated_date'] = parse_datetime(data.get('updated_date'))
             data['images'] = [image.name for image in images]
-            if virtual_tour:
-                data['virtual_tour'] = virtual_tour.name
+
             property_collection.insert_one(data)
 
         return JsonResponse({"message": "Property created successfully"}, status=201)
