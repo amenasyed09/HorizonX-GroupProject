@@ -65,16 +65,14 @@ def login(request):
 @require_http_methods(["POST"])
 def create_property(request):
     try:
-        # For multipart/form-data (which is required for file uploads)
+ 
         if request.content_type.startswith('multipart/form-data'):
-            # Extract text fields from the form
+      
             data = request.POST.dict()
             address=data.get('address')
-            # Extract file fields
+      
             images = request.FILES.getlist('images')
             virtual_tour = request.FILES.get('virtual_tour')
-
-            # Parse the dates if present
             if 'listing_date' in data:
                 data['listing_date'] = parse_datetime(data.get('listing_date'))
             if 'updated_date' in data:
@@ -82,8 +80,6 @@ def create_property(request):
             data['images'] = [image.name for image in images]
             if virtual_tour:
                 data['virtual_tour'] = virtual_tour.name
-
-            # Insert into MongoDB
             property_collection.insert_one(data)
 
         return JsonResponse({"message": "Property created successfully"}, status=201)
