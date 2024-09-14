@@ -131,3 +131,7 @@ STATIC_URL = 'static/'
 # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+X_FRAME_OPTIONS = 'ALLOW-FROM http://127.0.0.1:3000'
+MEDIA_URL = '/media/'
+MEDIA_ROOT = BASE_DIR / 'media'

@@ -16,10 +16,16 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from horizonx.views import login , signup
+from horizonx.views import login , signup, create_property, get_all_properties_by_search,get_all_properties_by_filters
 
+from django.conf.urls.static import static
+from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/login/', login),
     path('api/signup/', signup),
-]
+    path('api/newProperty/',create_property),
+   path('api/getAllProperties/search/<str:search_term>/', get_all_properties_by_search),
+    path('api/getAllProperties/filters/', get_all_properties_by_filters),
+ 
+]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
