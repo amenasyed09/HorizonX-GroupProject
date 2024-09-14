@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-
+import getCookie from 'D:/github/HorizonX-GroupProject/Frontend/vite-project/getCookies.js';
 const PropertyForm = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -12,11 +12,11 @@ const PropertyForm = () => {
     square_feet: '',
     status: '',
     listing_date: '',
-    updated_date: '',
     amenities: '',
     rating: '',
     images: [],
-    virtual_tour: null
+    virtual_tour: null,
+    username : getCookie(),
   });
 
   const navigate = useNavigate();
@@ -65,7 +65,6 @@ const PropertyForm = () => {
             { name: 'square_feet', placeholder: 'Square Feet', type: 'number' },
             { name: 'status', placeholder: 'Status' },
             { name: 'listing_date', placeholder: 'Listing Date', type: 'datetime-local' },
-            { name: 'updated_date', placeholder: 'Updated Date', type: 'datetime-local' },
             { name: 'amenities', placeholder: 'Amenities (comma-separated)', type: 'textarea' },
             { name: 'rating', placeholder: 'Rating (0-5)', type: 'number' }
           ].map((input, index) => (
