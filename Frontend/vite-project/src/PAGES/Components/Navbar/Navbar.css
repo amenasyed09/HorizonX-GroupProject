@@ -1,0 +1,159 @@
+/* Navbar Styles */
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 10px 20px;
+    background-color: white;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    position: relative;
+    height: 36px;
+}
+
+/* Center the logo */
+.navbar-logo {
+    position: absolute;
+    left: 50%;
+    transform: translateX(-50%);
+}
+
+.navbar-logo h1 {
+    font-size: 24px;
+    color: #333;
+}
+
+/* Navbar Links */
+.navbar-links {
+    display: flex;
+    list-style: none;
+    font-family: Galano Grotesque Alt, Adjusted Trebuchet MS Fallback, Trebuchet MS, sans-serif;
+    font-weight: bold;
+    word-spacing: 20px;
+}
+
+.navbar-links li {
+    margin: 0 25px;
+}
+
+.navbar-links a {
+    text-decoration: none;
+    color: #333;
+    font-size: 16px;
+}
+
+.navbar-links a:hover {
+    color: #007bff; /* Add hover effect */
+}
+
+/* Navbar Buttons */
+.navbar-buttons {
+        display: flex;
+    align-items: center;
+}
+
+.navbar-buttons .login-btn,
+.navbar-buttons .signup-btn {
+    font-weight: bold;
+    padding: 8px 16px;
+    margin-left: 10px;
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+}
+
+.navbar-buttons .login-btn {
+    position: relative;
+    background-color: transparent;
+}
+
+.navbar-buttons .signup-btn {
+    background-color: #000000;
+    color: white;
+    border-radius: 30px;
+    font-weight: 600;
+}
+
+.navbar-buttons .login-btn:hover,
+.navbar-buttons .signup-btn:hover {
+    opacity: 0.8;
+}
+
+.navbar-buttons .login-btn:hover::after {
+    content: '';
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: black;
+    position: absolute;
+    bottom: 0px;
+    left: 0;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .navbar {
+        padding: 10px 10px;
+        height: auto;
+    }
+
+    .navbar-logo h1 {
+        font-size: 20px;
+    }
+
+    .navbar-links {
+        font-size: 14px; /* Smaller font size */
+    }
+
+    .navbar-links li {
+        margin: 0 15px; /* Adjust spacing */
+    }
+
+    .navbar-buttons {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+    .navbar-buttons .login-btn,
+    .navbar-buttons .signup-btn {
+        margin: 5px 0;
+    }
+}
+
+@media (max-width: 768px) {
+    .navbar {
+        padding: 10px;
+        flex-direction: column;
+        align-items:center;
+    }
+
+    .navbar-logo {
+        position: static;
+        transform: none;
+        margin-bottom: 10px;
+    }
+
+    .navbar-links {
+        display: flex;
+        flex-direction: column;
+        width: 100%;
+        text-align: center;
+        font-size: 14px;
+    }
+
+    .navbar-links li {
+        margin-top: 10px;
+        margin-right: 50px;
+    }
+
+    .navbar-buttons {
+        margin-top: 10px;
+        width: 100%;
+        justify-content: space-between;
+        align-items: center;
+    }
+
+    .navbar-buttons .login-btn,
+    .navbar-buttons .signup-btn {
+        margin: 0;
+    }
+}

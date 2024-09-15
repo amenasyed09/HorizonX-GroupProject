@@ -1,0 +1,227 @@
+/* Base Styles */
+.discover-container {
+  padding: 20px;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.h2-title {
+  margin-left: 30px;
+  margin-bottom: 20px;
+}
+
+.button-container {
+  display: flex;
+  gap: 10px;
+  margin-top: 25px;
+  margin-left: 25px;
+}
+
+.button-container button {
+  font-weight: bold;
+  padding: 13px 20px;
+  border: 1px solid black;
+  border-radius: 25px;
+  color: black;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease, color 0.3s ease;
+  background-color: white;
+}
+
+.button-container button.active {
+  background-color: black;
+  color: white;
+}
+
+.grid-container {
+  display: grid;
+  gap: 10px;
+  margin-top: 20px;
+  height: 75vh;
+}
+
+/* Grid layout for different buttons */
+.grid-container.buying {
+  grid-template-columns: repeat(2, 1fr);
+  grid-template-rows: repeat(2, auto);
+}
+
+.grid-container.renting,
+.grid-container.selling {
+  grid-template-columns: repeat(3, 1fr);
+  grid-template-rows: 0.5fr;
+}
+
+.grid-item {
+  position: relative;
+  border: 1px solid #ddd;
+  border-radius: 5px;
+  background-color: #fff;
+  padding: 20px;
+  max-width: 100%;
+  box-sizing: border-box;
+  transition: border-color 0.3s ease;
+}
+
+.grid-item:hover {
+  border-color: black;
+}
+
+.grid-title {
+  position: relative;
+  display: inline;
+  padding: 10px;
+  top: 20px;
+}
+
+.grid-item .grid-paragraph {
+  position: relative;
+  top: 30px;
+  opacity: 0.6;
+  font-weight: bold;
+  left: 10px;
+  white-space: normal;
+  word-wrap: break-word;
+  max-width: calc(100% - 20px);
+}
+
+.grid-item img {
+  position: absolute;
+  top: 0;
+  right: 10px;
+  height: 50px;
+  width: fit-content;
+  margin-top: 10px;
+}
+
+.grid-link {
+  display: inline-block;
+  position: relative;
+  top: 70px;
+  margin-top: 10px;
+  font-weight: bold;
+  color: rgb(0, 0, 0);
+  text-decoration: underline;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+  .discover-container {
+    padding: 15px; /* Adjust padding for medium screens */
+  }
+
+  .h2-title {
+    margin-left: 20px; /* Adjust margin for medium screens */
+  }
+
+  .button-container {
+    margin-left: 15px; /* Adjust margin for medium screens */
+  }
+
+  .button-container button {
+    font-size: 14px; /* Adjust font size */
+    padding: 10px 15px; /* Adjust padding */
+  }
+
+  .grid-container {
+    height: 60vh; /* Adjust height */
+  }
+}
+
+@media (max-width: 768px) {
+  .discover-container {
+    padding: 10px; /* Reduce padding */
+  }
+
+  .h2-title {
+    margin-left: 15px; /* Further adjust margin */
+    margin-bottom: 15px; /* Adjust margin */
+    font-size: 18px; /* Reduce font size for smaller screens */
+  }
+
+  .button-container {
+    margin-left: 10px; /* Further adjust margin */
+    flex-direction: column; /* Stack buttons vertically */
+  }
+
+  .button-container button {
+    font-size: 12px; /* Further reduce font size */
+    padding: 8px 12px; /* Further reduce padding */
+  }
+
+  .grid-container {
+    height: 50vh; /* Further adjust height */
+    grid-template-columns: repeat(2, 1fr); /* Adjust grid layout for small screens */
+    gap: 10px; /* Ensure space between grid items */
+  }
+
+  .grid-item {
+    display: flex; /* Use flexbox for layout */
+    flex-direction: column; /* Stack content vertically */
+    justify-content: space-between; /* Ensure content is evenly spaced */
+    height: 40vh; /* Ensure items take full height */
+    padding: 10px; /* Add padding inside grid items */
+    box-sizing: border-box; /* Include padding in width/height calculation */
+    text-align: center; /* Center align text */
+    overflow: scroll;
+    scrollbar-width: none;
+  }
+
+  .grid-item img {
+    height: 30px; /* Adjust image height */
+    margin-bottom: 10px; /* Space below the image */
+  }
+
+  .grid-title {
+    font-size: 16px; /* Adjust font size */
+    margin-bottom: 5px; /* Space below the title */
+  }
+
+  .grid-paragraph {
+    font-size: 12px; /* Adjust font size */
+    margin-bottom: 10px; /* Space below the paragraph */
+  }
+
+  .grid-link {
+    font-size: 12px; /* Adjust font size */
+    margin-top: auto; /* Push to bottom */
+    display: block; /* Ensure block display */
+  }
+}
+
+@media (max-width: 480px) {
+  .discover-container {
+    padding: 5px; /* Minimal padding */
+  }
+
+  .h2-title {
+    margin-left: 10px; /* Minimal margin */
+    margin-bottom: 10px; /* Minimal margin */
+  }
+  .grid-item{
+    height: 40vh;
+    overflow:scroll;
+    scrollbar-width: none;
+  }
+
+  .button-container {
+    margin-left: 5px; /* Minimal margin */
+    flex-direction: column; /* Ensure buttons stack vertically */
+  }
+
+  .button-container button {
+    font-size: 10px; /* Further reduce font size */
+    padding: 6px 10px; /* Further reduce padding */
+  }
+
+  .grid-container {
+    font-size: 10px;
+    height: 35vh; /* Reduce height for mobile devices */
+    grid-template-columns: repeat(1, 1fr); /* Single column for extra-small screens */
+  }
+
+  .grid-item img {
+    height: 30px; /* Adjust image height */
+  }
+}

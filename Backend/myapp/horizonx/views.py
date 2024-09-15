@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from django.utils.dateparse import parse_datetime
 from bson import ObjectId
-
+import random
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
@@ -255,3 +255,16 @@ def upload_property(request):
         return JsonResponse({'message': 'Property uploaded successfully!'}, status=200)
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_random_properties(request):
+    all_properties = list(property_collection.find({}))
+
+    random_properties = random.sample(all_properties, min(8, len(all_properties)))
+
+    for property in random_properties:
+        property['_id'] = str(property['_id'])
+        property['user_id'] = str(property['user_id'])
+    return JsonResponse(random_properties, safe=False)
