@@ -27,6 +27,7 @@ export default function CoordinatesMap() {
         const coords = { lat: data.geometry.coordinates[1], lng: data.geometry.coordinates[0] };
         setPosition(coords);
         setMarkerPosition(coords);
+        console.log('Fetched coordinates:', coords); // Log fetched coordinates
       }
     } catch (error) {
       console.error("Error fetching geocode data:", error);
@@ -40,6 +41,7 @@ export default function CoordinatesMap() {
         if (marker) {
           const newLatLng = marker.getLatLng();
           setMarkerPosition(newLatLng);
+          console.log('Marker position after drag:', newLatLng); // Log marker position after drag
         }
       },
     }),
@@ -52,14 +54,37 @@ export default function CoordinatesMap() {
 
   const handleSubmit = async () => {
     try {
-      const updatedPropertyData = { ...propertyData, latitude: markerPosition.lat, longitude: markerPosition.lng, address: `${address}, ${city}, ${state}, ${country}` };
+      const updatedPropertyData = {
+        ...propertyData,
+        latitude: markerPosition.lat,
+        longitude: markerPosition.lng,
+        address: `${address}, ${city}, ${state}, ${country}`
+      };
+
+      console.log('Updated property data before submission:', updatedPropertyData); // Log data before submission
+
       const form = new FormData();
+
+      // Append non-file fields
       Object.keys(updatedPropertyData).forEach((key) => {
-        form.append(key, updatedPropertyData[key]);
+        if (key !== 'images') { // Skip 'images' as it is handled separately
+          form.append(key, updatedPropertyData[key]);
+        }
       });
+
+      // Ensure that you have image files in propertyData.images
+      if (propertyData.images && propertyData.images.length > 0) {
+        propertyData.images.forEach((file) => {
+          form.append('images', file); // 'images' is the field name expected by Django
+        });
+      }
+
+      console.log('Form data being sent:', Array.from(form.entries())); // Log FormData entries
+
       await axios.post('http://127.0.0.1:8000/api/newProperty/', form, {
         headers: { 'Content-Type': 'multipart/form-data' }
       });
+
       alert('Property submitted successfully');
       navigate('/');
     } catch (error) {

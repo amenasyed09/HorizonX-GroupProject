@@ -129,8 +129,7 @@ const PropertyDisplay = () => {
                   </p>
                   <p className="mt-2">Square Feet: {property.square_feet}</p>
                   <p className="mt-2">Amenities: {property.amenities}</p>
-                  <p className="mt-2">Agent: {property.agent_name}</p>
-                  <p className="mt-2">Contact: {property.agent_contact}, {property.agent_email}</p>
+                 
                 </div>
               </div>
               <div className="p-4">
