@@ -8,7 +8,7 @@ from django.views.decorators.http import require_http_methods
 import json
 from django.utils.dateparse import parse_datetime
 from bson import ObjectId
-
+import random
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 
@@ -254,7 +254,6 @@ def upload_property(request):
 
         return JsonResponse({'message': 'Property uploaded successfully!'}, status=200)
 
-<<<<<<< HEAD
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
@@ -267,8 +266,5 @@ def get_random_properties(request):
 
     for property in random_properties:
         property['_id'] = str(property['_id'])
-        property['user_id'] = str(property['    '])
+        property['user_id'] = str(property['user_id'])
     return JsonResponse(random_properties, safe=False)
-=======
-    return JsonResponse({'error': 'Invalid request method'}, status=400)
->>>>>>> b17b46daca501be0bf13e19c25929f6fa416279a
