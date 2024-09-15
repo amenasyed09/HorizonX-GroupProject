@@ -1,0 +1,227 @@
+/* Base Styles */
+* {
+    font-family: Galano Grotesque Alt, Adjusted Trebuchet MS Fallback, Trebuchet MS, sans-serif;
+}
+
+.hero-section {
+    position: relative;
+    height: 67vh; /* Full viewport height */
+    background: url('../../assets/heroImg.jpg') no-repeat center center/cover;
+    display: flex;
+    flex-direction: column; /* Stack elements vertically */
+    justify-content: center; /* Center elements vertically */
+    align-items: center; /* Center elements horizontally */
+    color: white;
+    padding: 20px; /* Add padding to give some space */
+}
+
+.hero-section::after {
+    content: '';
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    width: 100%;
+    height: 6%; /* Adjust height as needed */
+    background: linear-gradient(to bottom, transparent, rgba(255, 10, 10, 0.6)); /* Red shadow effect */
+    z-index: 1; /* Ensure the shadow is above the image but below other content */
+}
+
+.hero-navbar {
+    position: absolute;
+    top: 160px;
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    padding: 10px 0;
+    z-index: 2; /* Ensure navbar is above other content */
+}
+
+.hero-navbar-links {
+    list-style: none;
+    display: flex;
+    gap: 60px; /* Space between links */
+    padding: 0;
+}
+
+.hero-navbar-links li {
+    position: relative;
+    margin: 0;
+}
+
+.hero-navbar-links a {
+    text-decoration: none;
+    color: white;
+    font-size: 16px;
+    font-weight: bold;
+    position: relative;
+    transition: color 0.3s; /* Smooth transition for text color */
+}
+
+.hero-navbar-links a::after {
+    content: '';
+    display: block;
+    width: 120%; /* Make the underline longer */
+    height: 3px; /* Increase thickness */
+    background-color: white;
+    position: absolute;
+    bottom: -5px; /* Position it below the text */
+    left: 0;
+    opacity: 0; /* Initially hidden */
+    transition: opacity 0.3s; /* Smooth transition for underline */
+}
+
+.hero-navbar-links a.active::after,
+.hero-navbar-links a:hover::after {
+    opacity: 1; /* Show underline on hover */
+}
+
+.hero-navbar-links a:hover {
+    color: white; /* Ensure text color stays white */
+    opacity: 0.6; /* Reduce opacity of text only */
+}
+
+.hero-content {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    text-align: center;
+    z-index: 1;
+}
+
+.hero-title {
+    font-size: 48px;
+    margin: 20px 0; /* Add margin to ensure spacing from other elements */
+    font-weight: bold;
+    position: absolute;
+    top: 20px; /* Position it at the top */
+}
+
+.hero-subtitle {
+    font-weight: bold;
+    opacity: 0.8;
+    font-size: 24px;
+    padding-bottom: 30px;
+    margin: 50px 10px; /* Add margin to separate from title */
+}
+
+.hero-search-bar {
+    display: flex;
+    align-items: center;
+    margin: 20px 0; /* Add margin to separate from other elements */
+    max-width: 800px; /* Limit the maximum width of the search bar */
+    width: 100%;
+    background-color: #ffffff; /* Background color for the search bar */
+    border-radius: 25px; /* Rounded corners for the search bar */
+}
+
+.hero-search-bar input {
+    flex: 1;
+    padding: 15px;
+    border: none;
+    border-radius: 25px; /* Rounded corners for input */
+    font-size: 16px;
+    outline: none;
+}
+
+.search-icon {
+    padding: 15px;
+    background-color: #000000;
+    color: white;
+    border-radius: 25px; /* Rounded corners for the icon */
+    cursor: pointer;
+    transition: background-color 0.3s;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.search-icon:hover {
+    opacity: 0.7; /* Darker shade on hover */
+}
+
+@media (max-width: 1024px) {
+    .hero-section {
+        height: 50vh; 
+    }
+
+    .hero-title {
+        font-size: 36px;
+    }
+
+    .hero-subtitle {
+        font-size: 20px; 
+        margin: 30px 10px;
+        position: relative;
+        top: 25px;
+    }
+
+    .hero-navbar {
+        top: 120px; 
+    }
+
+    .hero-navbar-links {
+        gap: 40px;
+    }
+
+    .hero-search-bar {
+        max-width: 600px;
+    }
+}
+
+@media (max-width: 768px) {
+    .hero-section {
+        height: 40vh; 
+        padding: 10px;
+    }
+
+    .hero-title {
+        font-size: 28px;
+        top: 10px;
+    }
+
+    .hero-subtitle {
+        font-size: 18px;
+        margin: 20px 5px;
+    }
+
+    .hero-navbar {
+        top: 80px; 
+    }
+
+    .hero-navbar-links {
+        gap: 20px;
+    }
+
+    .hero-search-bar {
+        max-width: 100%; 
+    }
+}
+
+@media (max-width: 480px) {
+    .hero-section {
+        height: 30vh; /* Further adjust height for extra-small screens */
+        padding: 5px; /* Reduce padding */
+    }
+
+    .hero-title {
+        font-size: 20px; /* Smaller font size for title */
+        top: 36px; /* Adjust top positioning */
+    }
+
+    .hero-subtitle {
+        font-size: 13px; /* Smaller font size for subtitle */
+    }
+
+    .hero-navbar {
+        top: 60px; /* Further adjust top positioning */
+    }
+
+    .hero-navbar-links {
+        gap: 15px; /* Adjust space between links */
+        flex-direction: row; /* Stack links vertically */
+    }
+
+    .hero-search-bar {
+        max-width: 100%; /* Full width */
+    }
+}

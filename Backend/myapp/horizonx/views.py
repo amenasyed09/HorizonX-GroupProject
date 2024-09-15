@@ -9,7 +9,8 @@ import json
 from django.utils.dateparse import parse_datetime
 from bson import ObjectId
 
-
+from django.core.files.storage import default_storage
+from django.core.files.base import ContentFile
 
 
 client = MongoClient("mongodb://localhost:27017")
@@ -62,34 +63,6 @@ def login(request):
         return JsonResponse({"error": "An error occurred during login"}, status=500)
 
 @csrf_exempt
-@require_http_methods(["POST"])
-def create_property(request):
-    try:
-        if request.content_type.startswith('multipart/form-data'):
-            data = request.POST.dict()
-            id = users_collection.find_one({"username": data["username"]})["_id"]
-            del data["username"]
-            data["user_id"] = id
-
-            images = request.FILES.getlist('images')
-            virtual_tour = request.FILES.get('virtual_tour')
-            if 'listing_date' in data:
-                data['listing_date'] = parse_datetime(data.get('listing_date'))
-            data['images'] = [image.name for image in images]
-            if virtual_tour:
-                data['virtual_tour'] = virtual_tour.name
-            property_collection.insert_one(data)
-
-        return JsonResponse({"message": "Property created successfully"}, status=201)
-
-    except json.JSONDecodeError:
-        return JsonResponse({"error": "Invalid JSON data"}, status=400)
-    except Exception as e:
-        return JsonResponse({"error": str(e)}, status=500)
-
-
-
-@csrf_exempt
 @require_http_methods(["GET"])
 def get_all_properties_by_search(request, search_term=None):
 
@@ -113,7 +86,7 @@ def get_all_properties_by_search(request, search_term=None):
         property['user_id'] = str(property['user_id'])
 
     return JsonResponse(properties, safe=False)
-
+@csrf_exempt
 @require_http_methods(["GET"])
 def get_all_properties_by_filters(request):
     square_feet_min = int(request.GET.get('squareFeetMin', 0))
@@ -164,3 +137,134 @@ def get_all_properties_by_filters(request):
     
     return JsonResponse(properties, safe=False)
 
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_all_properties_by_username(request,username):
+    id = users_collection.find_one({"username": username})["_id"]
+    if not id:
+            return JsonResponse({"error": "User not found"}, status=404)
+
+    user_properties = list(property_collection.find({"user_id": ObjectId(id)}))
+    for property in user_properties:
+                property["_id"] = str(property["_id"])
+                property["user_id"]=str(property["user_id"])
+
+    return JsonResponse({"properties": user_properties}, status=200)
+
+@csrf_exempt
+@require_http_methods(["DELETE"])
+def delete_property(request, propertyId):
+    try:
+        # Convert propertyId to ObjectId
+        object_id = ObjectId(propertyId)
+        result = property_collection.delete_one({"_id": object_id})
+        print(result)
+        if result.deleted_count > 0:
+            return JsonResponse({"message": "Property deleted successfully"}, status=200)
+        else:
+            return JsonResponse({"message": "Property not found"}, status=404)
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_property_by_id(request, propertyId):
+    try:
+        # Convert propertyId to ObjectId
+        object_id = ObjectId(propertyId)
+        property = property_collection.find_one({"_id": object_id})
+        
+        if property:
+            # Convert ObjectId to string for JSON response
+            property["_id"] = str(property["_id"])
+            property["user_id"] = str(property["user_id"])  # Include if needed
+
+            return JsonResponse(property, safe=False, status=200)
+        else:
+            return JsonResponse({"error": "Property not found"}, status=404)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(['PUT'])
+def update_property(request,propertyId):
+    try:
+        # Convert propertyId to ObjectId
+        object_id = ObjectId(propertyId)
+        property = property_collection.update_one({"_id": object_id})
+        
+        if property:
+            # Convert ObjectId to string for JSON response
+            property["_id"] = str(property["_id"])
+            property["user_id"] = str(property["user_id"])  # Include if needed
+
+            return JsonResponse(property, safe=False, status=200)
+        else:
+            return JsonResponse({"error": "Property not found"}, status=404)
+
+    except Exception as e:
+        return JsonResponse({"error": str(e)}, status=400)
+    
+@csrf_exempt
+@require_http_methods(['POST'])
+def upload_property(request):
+    if request.method == 'POST':
+        # Get property details from the request
+        data = request.POST
+        username = data.get("user")
+        sale_type = data.get("saleType")  # Get saleType from the request
+        
+        # Find the user by username in the users collection
+        user = users_collection.find_one({"username": username})
+        if user is None:
+            return JsonResponse({"error": "User not found"}, status=404)
+        
+        # Get the user's ID and attach it to the property data
+        user_id = user["_id"]
+
+        # Get uploaded images
+        images = request.FILES.getlist('images')
+        
+        # Prepare the property data
+        property_data = {
+            'title': data.get('title'),
+            'description': data.get('description'),
+            'price': data.get('price'),
+            'property_type': data.get('property_type'),
+            'bedrooms': data.get('bedrooms'),
+            'bathrooms': data.get('bathrooms'),
+            'square_feet': data.get('square_feet'),
+            'listing_date': data.get('listing_date'),
+            'amenities': data.get('amenities'),
+            'rating': data.get('rating'),
+            'address': data.get('address'),
+            'city': data.get('city'),
+            'state': data.get('state'),
+            'country': data.get('country'),
+            'saleType': sale_type,  # Add saleType to the property data
+            'images': [image.name for image in images],  # Store the image paths
+            'user_id': user_id  # Store the user_id in the property data
+        }
+
+        # Insert the property data into MongoDB
+        property_collection.insert_one(property_data)
+
+        return JsonResponse({'message': 'Property uploaded successfully!'}, status=200)
+
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+
+
+@csrf_exempt
+@require_http_methods(["GET"])
+def get_random_properties(request):
+    all_properties = list(property_collection.find({}))
+
+    random_properties = random.sample(all_properties, min(8, len(all_properties)))
+
+    for property in random_properties:
+        property['_id'] = str(property['_id'])
+        property['user_id'] = str(property['    '])
+    return JsonResponse(random_properties, safe=False)

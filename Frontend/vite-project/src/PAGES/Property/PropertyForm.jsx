@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import getCookie from 'D:/github/HorizonX-GroupProject/Frontend/vite-project/getCookies.js';
+
 const PropertyForm = () => {
   const [formData, setFormData] = useState({
     title: '',
@@ -12,11 +12,10 @@ const PropertyForm = () => {
     square_feet: '',
     status: '',
     listing_date: '',
+    updated_date: '',
     amenities: '',
     rating: '',
     images: [],
-    virtual_tour: null,
-    username : getCookie(),
   });
 
   const navigate = useNavigate();
@@ -30,11 +29,6 @@ const PropertyForm = () => {
           ...prev,
           [name]: Array.from(files) // Convert FileList to array
         }));
-      } else if (name === 'virtual_tour') {
-        setFormData((prev) => ({
-          ...prev,
-          [name]: files[0] // Handle single file input
-        }));
       }
     } else {
       setFormData((prev) => ({
@@ -46,7 +40,22 @@ const PropertyForm = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    navigate('/getCoordinates', { state: { formData } });
+    const form = new FormData();
+    Object.keys(formData).forEach((key) => {
+      if (key === 'images') {
+        formData[key].forEach((file) => form.append('images', file));
+      } else {
+        form.append(key, formData[key]);
+      }
+    });
+
+      navigate('/getCoordinates', { state: { formData } });
+   
+  };
+
+  const validateForm = () => {
+    // Simple validation to check if all required fields are filled
+    return formData.title && formData.price && formData.property_type && formData.images.length > 0;
   };
 
   return (
@@ -56,15 +65,16 @@ const PropertyForm = () => {
         <form onSubmit={handleSubmit} className="grid grid-cols-2 gap-6">
           {/* Text Inputs */}
           {[
-            { name: 'title', placeholder: 'Title' },
+            { name: 'title', placeholder: 'Title', type: 'text' },
             { name: 'description', placeholder: 'Description', type: 'textarea' },
             { name: 'price', placeholder: 'Price', type: 'number' },
-            { name: 'property_type', placeholder: 'Property Type' },
+            { name: 'property_type', placeholder: 'Property Type', type: 'text' },
             { name: 'bedrooms', placeholder: 'Bedrooms', type: 'number' },
             { name: 'bathrooms', placeholder: 'Bathrooms', type: 'number' },
             { name: 'square_feet', placeholder: 'Square Feet', type: 'number' },
-            { name: 'status', placeholder: 'Status' },
+            { name: 'status', placeholder: 'Status', type: 'text' },
             { name: 'listing_date', placeholder: 'Listing Date', type: 'datetime-local' },
+           
             { name: 'amenities', placeholder: 'Amenities (comma-separated)', type: 'textarea' },
             { name: 'rating', placeholder: 'Rating (0-5)', type: 'number' }
           ].map((input, index) => (
@@ -82,7 +92,7 @@ const PropertyForm = () => {
                 <>
                   <label className="mb-2 text-gray-600 font-semibold">{input.placeholder}</label>
                   <input
-                    type={input.type || 'text'}
+                    type={input.type}
                     name={input.name}
                     value={formData[input.name]}
                     onChange={handleChange}
@@ -94,7 +104,7 @@ const PropertyForm = () => {
             </div>
           ))}
 
-          {/* File Inputs */}
+          {/* File Input for Images */}
           <div className="flex flex-col col-span-2">
             <label className="mb-2 text-gray-600 font-semibold">Images</label>
             <input
@@ -105,16 +115,7 @@ const PropertyForm = () => {
               className="border border-gray-300 rounded-lg p-3"
             />
           </div>
-          <div className="flex flex-col col-span-2">
-            <label className="mb-2 text-gray-600 font-semibold">Virtual Tour (Video)</label>
-            <input
-              type="file"
-              name="virtual_tour"
-              accept="video/*"
-              onChange={handleChange}
-              className="border border-gray-300 rounded-lg p-3"
-            />
-          </div>
+
           <button
             type="submit"
             className="col-span-2 bg-black text-white py-3 rounded-lg font-semibold hover:bg-gray-800 transition-all duration-200 border border-gray-400"

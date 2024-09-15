@@ -1,0 +1,145 @@
+.trends-section {
+    height: 90vh;
+    margin-top: 15vh;
+    text-align: center;
+    overflow: hidden;   
+    position: relative;
+}
+
+.trends-section img {
+    position: relative;
+    bottom: 25vh;
+    width: 100vw;
+    filter: brightness(60%) contrast(120%);
+    background-color: #eceaea;
+}
+
+.trend-title {
+    width: fit-content;
+    position: relative;
+    top: 25vh;
+    left: 45vw;
+    color: white;
+    font-size: 25px;
+    z-index: 1;
+    opacity: 0.9;
+}
+
+.trend-paragraph {
+    position: relative;
+    z-index: 1;
+    font-weight: bold;
+    font-size: 26px;
+    top: 25vh;
+    color: aliceblue;
+}
+
+.read-button {
+    position: relative;
+    z-index: 1;
+    border: 2px solid black;
+    border-radius: 25px;
+    padding: 13px 25px;
+    top: 32vh;
+    background-color: black;
+    color: white;
+    font-weight: bold;
+    font-size: 16px;
+}
+
+.read-button:hover {
+    background-color: transparent;
+    opacity: 0.8;
+}
+
+/* Responsive Styles */
+@media (max-width: 1024px) {
+    .trends-section {
+        height: 80vh; /* Adjust height for medium screens */
+        margin-top: 10vh; /* Adjust margin */
+    }
+
+    .trends-section img {
+        bottom: 20vh; /* Adjust image position */
+        width: 100vw; /* Adjust image width */
+    }
+
+    .trend-title {
+        top: 20vh; /* Adjust title position */
+        left: 40vw; /* Adjust title position */
+        font-size: 22px; /* Smaller font size */
+    }
+
+    .trend-paragraph {
+        font-size: 22px; /* Smaller font size */
+        top: 20vh; /* Adjust paragraph position */
+    }
+
+    .read-button {
+        top: 28vh; /* Adjust button position */
+        font-size: 14px; /* Smaller font size */
+        padding: 10px 20px; /* Adjust padding */
+    }
+}
+
+@media (max-width: 768px) {
+    .trends-section {
+        height: 70vh; /* Further adjust height for small screens */
+        margin-top: 32vh; /* Adjust margin */
+    }
+
+    .trends-section img {
+        bottom: 15vh; /* Adjust image position */
+        width: 100vw; /* Full width */
+        height: 45vh;
+    }
+
+    .trend-title {
+        top: 15vh; /* Adjust title position */
+        left: 50%; /* Center title horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        font-size: 18px; /* Smaller font size */
+    }
+
+    .trend-paragraph {
+        font-size: 20px; /* Smaller font size */
+        top: 15vh; /* Adjust paragraph position */
+    }
+
+    .read-button {
+        top: 24vh; /* Adjust button position */
+        font-size: 12px; /* Smaller font size */
+        padding: 8px 15px; /* Adjust padding */
+    }
+}
+
+@media (max-width: 480px) {
+    .trends-section {
+        height: 60vh; /* Further adjust height for extra-small screens */
+        margin-top: 15vh; /* Adjust margin */
+    }
+
+    .trends-section img {
+        bottom: 10vh; /* Adjust image position */
+        width: 100vw; /* Full width */
+        height: 25vh;
+    }
+
+    .trend-title {
+        top: 15vh; /* Adjust title position */
+        left: 50%; /* Center title horizontally */
+        transform: translateX(-50%); /* Center horizontally */
+        font-size: 16px; /* Smaller font size */
+    }
+
+    .trend-paragraph {
+        font-size: 11px; /* Smaller font size */
+        top: 13vh; /* Adjust paragraph position */
+    }
+
+    .read-button {
+        top: 13vh; /* Adjust button position */
+        font-size: 9px; /* Smaller font size */
+        padding: 8px 12px; /* Adjust padding */
+    }
+}
