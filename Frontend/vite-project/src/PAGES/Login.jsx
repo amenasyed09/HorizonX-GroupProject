@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { Link , Navigate} from "react-router-dom";
 import axios from "axios";
+import Cookies from 'js-cookie'
 export default function Login() {
   const [username, setUsername] = useState("");
   const [password, setPassword] = useState("");
@@ -16,7 +17,9 @@ export default function Login() {
         data
       );
       if (response.status === 200) {
-        document.cookie = `username = ${response.data.username} ; secure`;
+        Cookies.set('username',response.data.username)
+        // document.cookie = `username = ${response.data.username} ; secure`;
+
         setRedirect(true);
       } else if (response.status === 400) {
         setMessage("Username or Password is incorrect");

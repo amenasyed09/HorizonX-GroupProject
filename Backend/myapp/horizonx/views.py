@@ -254,6 +254,7 @@ def upload_property(request):
 
         return JsonResponse({'message': 'Property uploaded successfully!'}, status=200)
 
+<<<<<<< HEAD
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 
 
@@ -268,3 +269,6 @@ def get_random_properties(request):
         property['_id'] = str(property['_id'])
         property['user_id'] = str(property['    '])
     return JsonResponse(random_properties, safe=False)
+=======
+    return JsonResponse({'error': 'Invalid request method'}, status=400)
+>>>>>>> b17b46daca501be0bf13e19c25929f6fa416279a
