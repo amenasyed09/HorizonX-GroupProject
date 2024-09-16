@@ -1,8 +1,10 @@
 import React, { useState } from 'react';
 import axios from 'axios';
 import Cookies from 'js-cookie';
+import { Navigate, useNavigate } from 'react-router-dom';
 
 export default function PropertyForm1() {
+  const navigate=useNavigate()
   const [images, setImages] = useState([]);
   const [propertyData, setPropertyData] = useState({
     title: '',
@@ -21,6 +23,14 @@ export default function PropertyForm1() {
     country: '',
     user: Cookies.get('username'),
     saleType: 'sell', // Added saleType for Rent/Sell option
+    stories: '',
+    main_road: '',
+    guest_room: '',
+    basement: '',
+    hotwater_heating: '',
+    airconditioning: '',
+    parking: '',
+    prefarea: '',
   });
 
   const [isRent, setIsRent] = useState(false);
@@ -58,7 +68,15 @@ export default function PropertyForm1() {
           'Content-Type': 'multipart/form-data',
         },
       });
-      alert('Property submitted successfully');
+      if (response.status == 200) {
+        const modelRedirecting = async () => {
+          Cookies.set('model_params', response.data.priceHelp)
+          alert("Property Added Successfully");
+          navigate("/pricehelp")
+        }
+        modelRedirecting()
+      }
+
     } catch (error) {
       console.error('Error submitting property:', error);
       alert('Failed to submit property');
@@ -141,7 +159,7 @@ export default function PropertyForm1() {
             required
           />
         </div>
-        
+
         <div>
           <label className="block text-gray-700 font-bold mb-2">Bedrooms</label>
           <input
@@ -278,6 +296,104 @@ export default function PropertyForm1() {
             multiple
             onChange={handleFileChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg"
+          />
+        </div>
+
+        {/* stories */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Stories</label>
+          <input
+            type="number"
+            name="stories"
+            value={propertyData.stories}
+            onChange={handleInputChange}
+            placeholder="floor"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+
+        {/* main road */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Main Road</label>
+          <input
+            type="number"
+            name="main_road"
+            value={propertyData.main_road}
+            onChange={handleInputChange}
+            placeholder="Main road (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+        {/* guest room */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Guest Room</label>
+          <input
+            type="number"
+            name="guest_room"
+            value={propertyData.guest_room}
+            onChange={handleInputChange}
+            placeholder="Guest Room (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+        {/* basement */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Basement</label>
+          <input
+            type="number"
+            name="basement"
+            value={propertyData.basement}
+            onChange={handleInputChange}
+            placeholder="Basement (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+        {/* Hot water heating */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Hot Water heating</label>
+          <input
+            type="number"
+            name="hotwater_heating"
+            value={propertyData.hotwater_heating}
+            onChange={handleInputChange}
+            placeholder="hot water available (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+        {/* AC */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Air Conditioning</label>
+          <input
+            type="number"
+            name="airconditioning"
+            value={propertyData.airconditioning}
+            onChange={handleInputChange}
+            placeholder="AC available (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+        {/* Parking */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Parking</label>
+          <input
+            type="number"
+            name="parking"
+            value={propertyData.parking}
+            onChange={handleInputChange}
+            placeholder="Parking available (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+          />
+        </div>
+        {/* Prefarea */}
+        <div>
+          <label className="block text-gray-700 font-bold mb-2">Prefarea</label>
+          <input
+            type="number"
+            name="prefarea"
+            value={propertyData.prefarea}
+            onChange={handleInputChange}
+            placeholder="prefarea available (0 or 1)"
+            className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
           />
         </div>
 
