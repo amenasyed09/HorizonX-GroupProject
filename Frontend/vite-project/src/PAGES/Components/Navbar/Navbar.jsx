@@ -15,7 +15,7 @@ const Navbar = () => {
   });
 
   const handleLogout = () => {
-    Cookies.remove("username");
+    Cookies.remove("username"); 
     setIsLoggedIn(false); 
     navigate("/"); 
   };
