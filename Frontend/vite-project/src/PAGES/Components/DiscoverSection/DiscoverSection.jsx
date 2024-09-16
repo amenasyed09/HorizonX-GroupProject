@@ -113,7 +113,7 @@ const DiscoverSection = () => {
 
   return (
     <div className="discover-container">
-      <h2 className="h2-title">Discover how we can help</h2>
+      <h2 className="h2-title">Upcoming Features</h2>
       <div className="button-container">
         <button
           className={`buying-button ${activeButton === 'buying' ? 'active' : ''}`}

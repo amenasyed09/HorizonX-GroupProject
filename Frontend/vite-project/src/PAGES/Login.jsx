@@ -18,7 +18,6 @@ export default function Login() {
       );
       if (response.status === 200) {
         Cookies.set('username',response.data.username)
-        // document.cookie = `username = ${response.data.username} ; secure`;
 
         setRedirect(true);
       } else if (response.status === 400) {
