@@ -214,25 +214,28 @@ def upload_property(request):
     if request.method == 'POST':
         # Get property details from the request
         data = request.POST
-        username = data.get("user")
         sale_type = data.get("saleType")  # Get saleType from the request
         
         # Find the user by username in the users collection
-        user = users_collection.find_one({"username": username})
-        if user is None:
-            return JsonResponse({"error": "User not found"}, status=404)
-        
-        # Get the user's ID and attach it to the property data
-        user_id = user["_id"]
+        if(data.get("user")):
+            username = data.get("user")
+            user = users_collection.find_one({"username": username})
+            if user is None:
+                return JsonResponse({"error": "User not found"}, status=404)
+            
+            # Get the user's ID and attach it to the property data
+            user_id = user["_id"]
+        else:
+            user_id = data.get("user_id")
 
         # Get uploaded images
         images = request.FILES.getlist('images')
         
         # Prepare the property data
+
         property_data = {
             'title': data.get('title'),
             'description': data.get('description'),
-            'price': data.get('price'),
             'property_type': data.get('property_type'),
             'bedrooms': data.get('bedrooms'),
             'bathrooms': data.get('bathrooms'),
@@ -245,8 +248,8 @@ def upload_property(request):
             'state': data.get('state'),
             'country': data.get('country'),
             'saleType': sale_type,  # Add saleType to the property data
-            'images': [image.name for image in images],  # Store the image paths
-            'user_id': user_id,  # Store the user_id in the property data
+            'images': [image.name for image in images], 
+            'user_id': user_id,  
             'stories':data.get('stories'),
             'main_road':data.get('main_road'),
             'guest_room':data.get('guest_room'),
@@ -256,27 +259,24 @@ def upload_property(request):
             'parking':data.get('parking'),
             'prefarea':data.get('prefarea')
         }
-        
-        # pf=PolynomialFeatures()
-        # X_Test Parameters for our Regression Model.
-        Model_parameters=[property_data["square_feet"],property_data['bedrooms'],property_data["bathrooms"],property_data["stories"],property_data["main_road"],property_data["guest_room"],property_data['basement'],property_data['hotwater_heating'],property_data['airconditioning'],property_data['parking'],property_data['prefarea']]
-        Model_parameters=pd.Series(Model_parameters)
-        Model_parameters=pd.to_numeric(Model_parameters)
-        # Model_parameters=np.array(pf.fit_transform(Model_parameters), dtype=np.float64)
-        # for i in range(len(Model_parameters)):
-        #     Model_parameters[i]=int(Model_parameters[i])
-        
-        # y = ''.join(map(str, Model_parameters))
-        # for i in range(len(y)):
-        #     Model_parameters[i]=int(float(y[i]))
-        # Model_parameters = int(float(y))
-        PriceModel=joblib.load("C:/Users/jaypa/OneDrive/Desktop/HorizonX-Group/HorizonX-GroupProject/Backend/myapp/horizonx/saved-models/Horizon_Model.joblib")
-        modelSellPrice=PriceModel.predict([Model_parameters])
-        modelSellPrice=int(modelSellPrice)
-        # Insert the property data into MongoDB
-        property_collection.insert_one(property_data)
+        if(data.get('price')):
+            property_data['price'] = data.get("price")
+            property_collection.insert_one(property_data)
+            return JsonResponse({'message': 'Property uploaded successfully!'}, status=201)
+        else:
 
-        return JsonResponse({'message': 'Property uploaded successfully!','priceHelp':modelSellPrice}, status=200)
+            Model_parameters=[property_data["square_feet"],property_data['bedrooms'],property_data["bathrooms"],property_data["stories"],property_data["main_road"],property_data["guest_room"],property_data['basement'],property_data['hotwater_heating'],property_data['airconditioning'],property_data['parking'],property_data['prefarea']]
+            Model_parameters=pd.Series(Model_parameters)
+            Model_parameters=pd.to_numeric(Model_parameters)
+
+
+            PriceModel=joblib.load("horizonx\saved-models\Horizon_Model.joblib")
+            modelSellPrice=PriceModel.predict([Model_parameters])
+            modelSellPrice=int(modelSellPrice)
+            
+            property_data['user_id'] = str(property_data['user_id'])
+            return JsonResponse({'message': 'Property uploaded successfully!','priceHelp':modelSellPrice, 'property_data':property_data}, status=200)
+
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
 

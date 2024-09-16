@@ -22,7 +22,7 @@ export default function PropertyForm1() {
     state: '',
     country: '',
     user: Cookies.get('username'),
-    saleType: 'sell', // Added saleType for Rent/Sell option
+    saleType: 'sell',
     stories: '',
     main_road: '',
     guest_room: '',
@@ -70,13 +70,17 @@ export default function PropertyForm1() {
       });
       if (response.status == 200) {
         const modelRedirecting = async () => {
+          
           Cookies.set('model_params', response.data.priceHelp)
-          alert("Property Added Successfully");
+          
+          console.log(response.data.property_data);
+          Cookies.set('data', JSON.stringify(response.data.property_data));
           navigate("/pricehelp")
         }
         modelRedirecting()
+      }else if(response.status == 201){
+          navigate("/")
       }
-
     } catch (error) {
       console.error('Error submitting property:', error);
       alert('Failed to submit property');
@@ -129,7 +133,7 @@ export default function PropertyForm1() {
         </div>
 
         {/* Price Field */}
-        <div>
+        {isRent?(<div>
           <label className="block text-gray-700 font-bold mb-2">Price</label>
           <div className="flex items-center">
             <input
@@ -144,7 +148,8 @@ export default function PropertyForm1() {
             {/* Show "/per month" when "Rent" is selected */}
             {isRent && <span className="ml-2 text-gray-500">/per month</span>}
           </div>
-        </div>
+        </div>):(<></>)}
+        
 
         {/* Other fields */}
         <div>
