@@ -1,6 +1,6 @@
 import random
 from django.shortcuts import render
-from jsonschema import ValidationError
+# from jsonschema import ValidationError
 from pymongo import MongoClient
 from django.http import HttpResponse, JsonResponse
 import bcrypt
@@ -12,8 +12,8 @@ from bson import ObjectId
 
 from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
-
-
+import joblib
+import pandas as pd
 client = MongoClient("mongodb://localhost:27017")
 db = client.horizonx
 users_collection = db.users
@@ -247,13 +247,37 @@ def upload_property(request):
             'country': data.get('country'),
             'saleType': sale_type,  # Add saleType to the property data
             'images': [image.name for image in images],  # Store the image paths
-            'user_id': user_id  # Store the user_id in the property data
+            'user_id': user_id,  # Store the user_id in the property data
+            'stories':data.get('stories'),
+            'main_road':data.get('main_road'),
+            'guest_room':data.get('guest_room'),
+            'basement':data.get('basement'),
+            'hotwater_heating':data.get('hotwater_heating'),
+            'airconditioning':data.get('airconditioning'),
+            'parking':data.get('parking'),
+            'prefarea':data.get('prefarea')
         }
-
+        
+        # pf=PolynomialFeatures()
+        # X_Test Parameters for our Regression Model.
+        Model_parameters=[property_data["square_feet"],property_data['bedrooms'],property_data["bathrooms"],property_data["stories"],property_data["main_road"],property_data["guest_room"],property_data['basement'],property_data['hotwater_heating'],property_data['airconditioning'],property_data['parking'],property_data['prefarea']]
+        Model_parameters=pd.Series(Model_parameters)
+        Model_parameters=pd.to_numeric(Model_parameters)
+        # Model_parameters=np.array(pf.fit_transform(Model_parameters), dtype=np.float64)
+        # for i in range(len(Model_parameters)):
+        #     Model_parameters[i]=int(Model_parameters[i])
+        
+        # y = ''.join(map(str, Model_parameters))
+        # for i in range(len(y)):
+        #     Model_parameters[i]=int(float(y[i]))
+        # Model_parameters = int(float(y))
+        PriceModel=joblib.load("C:/Users/jaypa/OneDrive/Desktop/HorizonX-Group/HorizonX-GroupProject/Backend/myapp/horizonx/saved-models/Horizon_Model.joblib")
+        modelSellPrice=PriceModel.predict([Model_parameters])
+        modelSellPrice=int(modelSellPrice)
         # Insert the property data into MongoDB
         property_collection.insert_one(property_data)
 
-        return JsonResponse({'message': 'Property uploaded successfully!'}, status=200)
+        return JsonResponse({'message': 'Property uploaded successfully!','priceHelp':modelSellPrice}, status=200)
 
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)
