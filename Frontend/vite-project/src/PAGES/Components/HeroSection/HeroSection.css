@@ -103,36 +103,16 @@
     padding-bottom: 30px;
     margin: 50px 10px; /* Add margin to separate from title */
 }
-
 .hero-search-bar {
     display: flex;
+    justify-content: center;
     align-items: center;
-    margin: 20px 0; /* Add margin to separate from other elements */
-    max-width: 800px; /* Limit the maximum width of the search bar */
-    width: 100%;
-    background-color: #ffffff; /* Background color for the search bar */
-    border-radius: 25px; /* Rounded corners for the search bar */
-}
-
-.hero-search-bar input {
-    flex: 1;
-    padding: 15px;
-    border: none;
-    border-radius: 25px; /* Rounded corners for input */
-    font-size: 16px;
-    outline: none;
+    height: 100vh; /* Center the icon vertically within the viewport */
 }
 
 .search-icon {
-    padding: 15px;
-    background-color: #000000;
-    color: white;
-    border-radius: 25px; /* Rounded corners for the icon */
+    font-size: 36px; /* Increase the size of the search icon */
     cursor: pointer;
-    transition: background-color 0.3s;
-    display: flex;
-    align-items: center;
-    justify-content: center;
 }
 
 .search-icon:hover {

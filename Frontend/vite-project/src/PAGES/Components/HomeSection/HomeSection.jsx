@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import { Link } from 'react-router-dom';
 import axios from 'axios'; // Import axios for API calls
 import './HomeSection.css';
 
@@ -21,18 +22,23 @@ const HomeSection = () => {
     <div className="home-section-container">
       <h3 className="section-title">Browse trending properties</h3>
       <div className="home-section-grid">
-        {properties.map((property) => (
-          <div key={property._id} className="house-block">
+      {properties.map((property) => (
+        <Link 
+          to={`/property/${property._id}`} 
+          key={property._id}
+          className="block" // Ensure the Link is a block-level element
+        >
+          <div className="house-block bg-white shadow-lg rounded-lg overflow-hidden">
             <img 
-              src={property.images[0] || '/placeholder.jpg'} 
-              alt={property.title} 
-              className="house-img"
+              src={`http://127.0.0.1:8000${property.images[0]}` || '/placeholder.jpg'} 
+              alt={property.title || 'Property Image'} 
+              className="house-img object-cover w-full h-48" 
             />
-            <h3 className="house-title">{property.title || 'No Title'}</h3>
-            <div className="house-price">${property.price || 'N/A'}</div>
-            <div className="house-available">{property.status || 'Unavailable'}</div>
+            <h3 className="house-title text-lg font-bold p-4">{property.title || 'No Title'}</h3>
+            <div className="house-price text-gray-800 p-4">${property.price || 'N/A'}</div>
           </div>
-        ))}
+        </Link>
+      ))}
       </div>
     </div>
   );

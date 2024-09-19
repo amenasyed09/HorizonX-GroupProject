@@ -16,24 +16,22 @@ Including another URLconf
 """
 from django.contrib import admin
 from django.urls import path
-from horizonx.views import login , signup, get_all_properties_by_search,get_all_properties_by_filters,get_all_properties_by_username,delete_property,get_property_by_id,update_property,upload_property , get_random_properties
-
+from horizonx.views import login , signup, get_all_properties_by_search,get_all_properties_by_filters,get_all_properties_by_username,delete_property,get_property_by_id,update_property,upload_property , get_random_properties,update_property_images
 from django.conf.urls.static import static
 from django.conf import settings
 urlpatterns = [
     path('admin/', admin.site.urls),
     path('api/login/', login),
     path('api/signup/', signup),
-    path('api/getAllProperties/search/<str:search_term>/', get_all_properties_by_search),
-    path('api/getAllProperties/filters/', get_all_properties_by_filters),
+    path('api/getAllProperties/search/<str:sale_type>/<str:search_term>/', get_all_properties_by_search),
+    path('api/getAllProperties/filters/<str:sale_type>/', get_all_properties_by_filters),
     path('api/allProperties/<str:username>/',get_all_properties_by_username),
-
     path('api/properties/',get_random_properties),
-
     path('api/property/<str:propertyId>/', get_property_by_id, name='get_property_by_id'),
     path('api/deleteProperty/<str:propertyId>/',delete_property),
     path('api/updateProperty/<str:propertyId>/',update_property),
-    path('api/newProperty/',upload_property)
+    path('api/newProperty/', upload_property, name='upload_property'),
+    path('api/updatePropertyImages/<str:propertyId>/', update_property_images, name='update-property-images'),
 
     
 ]+ static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)

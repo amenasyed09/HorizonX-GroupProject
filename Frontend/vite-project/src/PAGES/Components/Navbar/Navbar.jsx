@@ -29,13 +29,13 @@ const Navbar = () => {
       </div>
       <ul className="navbar-links">
         <li>
-          <Link to={'/allProperties'}>Buy</Link>
+          <Link to={'/getAllProperties/buy'}>Buy</Link>
         </li>
         <li>
           <Link to={'/newProperty'}>Sell</Link>
         </li>
         <li>
-          <Link to={'/rentProperties'}>Rent</Link>
+          <Link to={'/getAllProperties/rent'}>Rent</Link>
         </li>
       </ul>
       <div className="navbar-buttons">

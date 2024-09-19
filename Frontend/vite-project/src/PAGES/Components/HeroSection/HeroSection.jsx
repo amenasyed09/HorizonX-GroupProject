@@ -1,6 +1,7 @@
 
 
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './HeroSection.css';
 import { FaSearch } from 'react-icons/fa'; // Import search icon
 const HeroSection = () => {
@@ -8,9 +9,9 @@ const HeroSection = () => {
         <section className="hero-section">
             <nav className="hero-navbar">
                 <ul className="hero-navbar-links">
-                    <li><a href="/buy">Buy</a></li>
-                    <li><a href="/sell">Sell</a></li>
-                    <li><a href="/rent">Rent</a></li>
+                    <li><a href="/getAllProperties/buy">Buy</a></li>
+                    <li><a href="/newProperty">Sell</a></li>
+                    <li><a href="/getAllProperties/rent">Rent</a></li>
                 </ul>
             </nav>
             <div className="hero-content">
@@ -19,11 +20,10 @@ const HeroSection = () => {
                 
                 {/* Search Bar with SVG Icon */}
                 <div className="hero-search-bar">
-                    <input type="text" placeholder="Search for homes, apartments, or any property..." />
-                    <div className="search-icon">
-                        <FaSearch />
-                    </div>
-                </div>
+      <Link to="/getAllProperties/all" className="search-icon">
+        <FaSearch />
+      </Link>
+    </div>
 
             </div>
         </section>

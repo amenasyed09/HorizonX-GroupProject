@@ -2,27 +2,18 @@ import React, { useState } from 'react';
 
 const FilterSidebar = ({ onFilterChange }) => {
   const [squareFeet, setSquareFeet] = useState([0, 10000]); // Two value range
-  const [amenities, setAmenities] = useState({
-    gym: false,
-    pool: false,
-    playground: false,
-  });
   const [bedrooms, setBedrooms] = useState(1); // Single value
   const [bathrooms, setBathrooms] = useState(1); // Single value
   const [rating, setRating] = useState(1); // Single value
-
-  const handleAmenityChange = (e) => {
-    const { name, checked } = e.target;
-    setAmenities((prev) => ({ ...prev, [name]: checked }));
-  };
+  const [stories, setStories] = useState(1); // Single value
 
   const handleApplyFilters = () => {
     const filters = {
       squareFeet,
-      amenities: Object.keys(amenities).filter((key) => amenities[key]), // Only include amenities that are checked
       bedrooms,
       bathrooms,
       rating,
+      stories, // Add stories to filters
     };
 
     console.log('Applying filters:', filters); // Debugging line
@@ -102,39 +93,18 @@ const FilterSidebar = ({ onFilterChange }) => {
         <p className="text-xs">{rating} stars</p>
       </div>
 
-      {/* Amenities Filter */}
+      {/* Stories Filter */}
       <div className="mb-3">
-        <h4 className="text-xs font-semibold mb-1">Amenities</h4>
-        <label className="flex items-center mb-1 text-xs">
-          <input
-            type="checkbox"
-            name="gym"
-            checked={amenities.gym}
-            onChange={handleAmenityChange}
-            className="mr-2"
-          />
-          Gym
-        </label>
-        <label className="flex items-center mb-1 text-xs">
-          <input
-            type="checkbox"
-            name="pool"
-            checked={amenities.pool}
-            onChange={handleAmenityChange}
-            className="mr-2"
-          />
-          Pool
-        </label>
-        <label className="flex items-center mb-1 text-xs">
-          <input
-            type="checkbox"
-            name="playground"
-            checked={amenities.playground}
-            onChange={handleAmenityChange}
-            className="mr-2"
-          />
-          Playground
-        </label>
+        <h4 className="text-xs font-semibold mb-1">Stories</h4>
+        <input
+          type="number"
+          min="1"
+          max="100"
+          value={stories}
+          onChange={(e) => setStories(Number(e.target.value))}
+          className="w-full border border-gray-300 rounded-lg p-1 text-xs"
+        />
+        <p className="text-xs">{stories} stories</p>
       </div>
 
       <button

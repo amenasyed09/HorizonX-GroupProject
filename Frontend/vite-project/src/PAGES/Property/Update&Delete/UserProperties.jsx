@@ -9,7 +9,8 @@ const UserProperties = () => {
   const [error, setError] = useState(null);
   const [showModal, setShowModal] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
-  const navigate=useNavigate()
+  const navigate = useNavigate();
+
   // Fetch username from cookies
   const username = Cookies.get('username');
 
@@ -17,7 +18,6 @@ const UserProperties = () => {
   useEffect(() => {
     const fetchProperties = async () => {
       try {
-        // Log the username and API URL for debugging
         console.log('Fetching properties for:', username);
         const apiUrl = `http://127.0.0.1:8000/api/allProperties/${username}`;
         console.log('API URL:', apiUrl);
@@ -42,10 +42,16 @@ const UserProperties = () => {
     }
   }, [username]);
 
-  const handleUpdate=(propertyId)=>
-  {
-navigate(`/update/${propertyId}`)
-  }
+  // Navigate to property update form
+  const handleUpdate = (propertyId) => {
+    navigate(`/update/${propertyId}`);
+  };
+
+  // Navigate to the image update form
+  const handleUpdateImages = (propertyId) => {
+    navigate(`/updateImages/${propertyId}`);
+  };
+
   // Show modal for delete confirmation
   const handleDeleteClick = (propertyId) => {
     setPropertyToDelete(propertyId);
@@ -88,10 +94,9 @@ navigate(`/update/${propertyId}`)
             key={property._id}
             className="relative bg-white shadow-lg border border-gray-300 p-4 rounded-lg hover:bg-gray-100 transition"
           >
-            {/* Property Image */}
             {property.images.length > 0 ? (
               <img
-                src={property.images[0]} // Assuming the first image is the main one
+                src={`http://127.0.0.1:8000${property.images[0]}`}
                 alt={property.title}
                 className="w-full h-40 object-cover rounded-lg mb-4"
               />
@@ -101,20 +106,20 @@ navigate(`/update/${propertyId}`)
               </div>
             )}
 
-            {/* Property Main Info */}
             <h2 className="text-lg font-bold mb-2">{property.title}</h2>
-            <p className="text-gray-700">Price: ${property.price}</p>
+            <p className="text-gray-700">Price: {property.price}</p>
             <p className="text-gray-700">Type: {property.property_type}</p>
 
-            {/* Additional Info - Show on hover */}
             <div className="absolute top-0 left-0 w-full h-full opacity-0 hover:opacity-100 bg-black bg-opacity-75 text-white p-4 rounded-lg transition-opacity duration-300 flex flex-col justify-between">
               <div>
-                <p>Description: {property.description}</p>
                 <p>Bedrooms: {property.bedrooms}</p>
                 <p>Bathrooms: {property.bathrooms}</p>
                 <p>Square Feet: {property.square_feet}</p>
                 <p>Rating: {property.rating}/5</p>
                 <p>Amenities: {property.amenities}</p>
+                <p className="text-white">
+                  Location: {property.address}, {property.city}, {property.state}, {property.country}
+                </p>
               </div>
               <div className="flex justify-between mt-4">
                 <button
@@ -122,6 +127,12 @@ navigate(`/update/${propertyId}`)
                   className="bg-black text-white px-4 py-2 rounded hover:bg-gray-600"
                 >
                   Update
+                </button>
+                <button
+                  onClick={() => handleUpdateImages(property._id)}
+                  className="bg-black text-white px-4 py-2 rounded hover:bg-gray-600"
+                >
+                  Update Images
                 </button>
                 <button
                   onClick={() => handleDeleteClick(property._id)}
@@ -135,7 +146,6 @@ navigate(`/update/${propertyId}`)
         ))}
       </div>
 
-      {/* Confirmation Modal */}
       {showModal && (
         <div className="fixed inset-0 flex items-center justify-center z-50">
           <div className="bg-white p-6 rounded shadow-lg w-80">

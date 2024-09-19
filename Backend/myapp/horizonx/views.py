@@ -1,6 +1,7 @@
+import os
 import random
+from django.conf import settings
 from django.shortcuts import render
-# from jsonschema import ValidationError
 from pymongo import MongoClient
 from django.http import HttpResponse, JsonResponse
 import bcrypt
@@ -14,6 +15,10 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import joblib
 import pandas as pd
+import logging
+
+logger = logging.getLogger(__name__)
+
 client = MongoClient("mongodb://localhost:27017")
 db = client.horizonx
 users_collection = db.users
@@ -63,16 +68,18 @@ def login(request):
     except Exception as e:
         return JsonResponse({"error": "An error occurred during login"}, status=500)
 
+
 @csrf_exempt
 @require_http_methods(["GET"])
-def get_all_properties_by_search(request, search_term=None):
-
-    if search_term == 'all' or search_term is None:
- 
-        properties = list(property_collection.find({}))
+def get_all_properties_by_search(request, sale_type, search_term=None):
+    if sale_type == 'all':
+        query = {}  # Fetch all properties regardless of saleType
     else:
- 
-        query = {
+        query = {'saleType': sale_type}
+    
+    if search_term and search_term != 'all':
+        # Extend the query to include search terms
+        search_query = {
             '$or': [
                 {'title': {'$regex': search_term, '$options': 'i'}},
                 {'city': {'$regex': search_term, '$options': 'i'}},
@@ -80,62 +87,55 @@ def get_all_properties_by_search(request, search_term=None):
                 {'country': {'$regex': search_term, '$options': 'i'}}
             ]
         }
-      
-        properties = list(property_collection.find(query))
+        query.update(search_query)
+    properties = list(property_collection.find(query))
+
     for property in properties:
         property['_id'] = str(property['_id'])
         property['user_id'] = str(property['user_id'])
 
     return JsonResponse(properties, safe=False)
+
 @csrf_exempt
 @require_http_methods(["GET"])
-def get_all_properties_by_filters(request):
+def get_all_properties_by_filters(request, sale_type):
     square_feet_min = int(request.GET.get('squareFeetMin', 0))
     square_feet_max = int(request.GET.get('squareFeetMax', 10000))
     bedrooms_max = int(request.GET.get('bedroomsMax', 1))
     bathrooms_max = int(request.GET.get('bathroomsMax', 1))
     rating_max = int(request.GET.get('ratingMax', 1))
-    amenities = request.GET.getlist('amenities')
-    
-    print('square_feet_min:', square_feet_min)
-    print('square_feet_max:', square_feet_max)
-    print('bedrooms_max:', bedrooms_max)
-    print('bathrooms_max:', bathrooms_max)
-    print('rating_max:', rating_max)
-    
+    stories_max = int(request.GET.get('stories', 1)) 
     query = {
+        'saleType': sale_type,
         'square_feet': {'$gte': square_feet_min, '$lte': square_feet_max},
         'bedrooms': {'$lte': bedrooms_max},
         'bathrooms': {'$lte': bathrooms_max},
         'rating': {'$lte': rating_max},
+        'stories': {'$lte': stories_max}
     }
-    
-    if amenities:
-        query['amenities'] = {'$all': amenities}
-    
+
     pipeline = [
         {
             '$addFields': {
                 'square_feet': {'$toInt': '$square_feet'},
                 'bedrooms': {'$toInt': '$bedrooms'},
                 'bathrooms': {'$toInt': '$bathrooms'},
-                'rating': {'$toInt': '$rating'}
+                'rating': {'$toInt': '$rating'},
+                'stories': {'$toInt': '$stories'}
             }
         },
         {'$match': query}
     ]
-    
-    print('--------------------------- Pipeline is :', pipeline)
-    
+
     properties = list(property_collection.aggregate(pipeline))
-    
-    # Convert ObjectId to string
+
+    print(f"Query: {query}")
+    print(f"Pipeline: {pipeline}")
+    print(f"Properties fetched: {properties}")
     for property in properties:
-        if '_id' in property:
-            property['_id'] = str(property['_id'])
-    
-    print('--------------------------- Properties:', properties)
-    
+        property['_id'] = str(property['_id'])
+        property['user_id'] = str(property['user_id'])
+
     return JsonResponse(properties, safe=False)
 
 @csrf_exempt
@@ -156,7 +156,6 @@ def get_all_properties_by_username(request,username):
 @require_http_methods(["DELETE"])
 def delete_property(request, propertyId):
     try:
-        # Convert propertyId to ObjectId
         object_id = ObjectId(propertyId)
         result = property_collection.delete_one({"_id": object_id})
         print(result)
@@ -172,68 +171,99 @@ def delete_property(request, propertyId):
 @require_http_methods(["GET"])
 def get_property_by_id(request, propertyId):
     try:
-        # Convert propertyId to ObjectId
+
         object_id = ObjectId(propertyId)
         property = property_collection.find_one({"_id": object_id})
         
         if property:
-            # Convert ObjectId to string for JSON response
+    
             property["_id"] = str(property["_id"])
-            property["user_id"] = str(property["user_id"])  # Include if needed
-
+            property["user_id"] = str(property["user_id"])  
             return JsonResponse(property, safe=False, status=200)
         else:
             return JsonResponse({"error": "Property not found"}, status=404)
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=400)
+
+@csrf_exempt
+@require_http_methods(['PATCH'])
+def update_property_images(request, propertyId):
+    if request.method == 'PATCH':
+        logger.info('Request received for propertyId: %s', propertyId)
+        if 'images' in request.FILES:
+            images = request.FILES.getlist('images')
+            image_urls = []
+            for image in images:
+                file_name = default_storage.save('property_images/' + image.name, ContentFile(image.read()))
+                image_url = default_storage.url(file_name)
+                image_urls.append(image_url)
+                logger.info('Image saved: %s', image_url)
+        if 'removedImages' in request.POST:
+            removed_images = json.loads(request.POST.get('removedImages'))
+            for image_path in removed_images:
+                file_path = os.path.join(settings.MEDIA_ROOT, image_path)
+                try:
+                    os.remove(file_path)
+                    logger.info('Removed image: %s', file_path)
+                except FileNotFoundError:
+                    logger.warning('Image not found for removal: %s', file_path)
+
+        return JsonResponse({'message': 'Images updated successfully'})
+    return JsonResponse({'error': 'Invalid request method'}, status=405)
 
 
 @csrf_exempt
-@require_http_methods(['PUT'])
-def update_property(request,propertyId):
+@require_http_methods(['PATCH'])
+def update_property(request, propertyId):
     try:
-        # Convert propertyId to ObjectId
-        object_id = ObjectId(propertyId)
-        property = property_collection.update_one({"_id": object_id})
+        property_id = ObjectId(propertyId)
+        property_obj = property_collection.find_one({"_id": property_id})
         
-        if property:
-            # Convert ObjectId to string for JSON response
-            property["_id"] = str(property["_id"])
-            property["user_id"] = str(property["user_id"])  # Include if needed
-
-            return JsonResponse(property, safe=False, status=200)
-        else:
+        if not property_obj:
             return JsonResponse({"error": "Property not found"}, status=404)
+        data = json.loads(request.body)
+
+        if 'user_id' in data:
+            try:
+                data['user_id'] = ObjectId(data['user_id'])
+            except Exception:
+                return JsonResponse({"error": "Invalid user_id format"}, status=400)
+        update_fields = {k: v for k, v in data.items() if k != '_id'}
+        
+        property_collection.update_one({"_id": property_id}, {"$set": update_fields})
+        
+        return JsonResponse({"message": "Property updated successfully"}, status=200)
 
     except Exception as e:
-        return JsonResponse({"error": str(e)}, status=400)
-    
+        return JsonResponse({"error": str(e)}, status=500)
+
+
 @csrf_exempt
 @require_http_methods(['POST'])
 def upload_property(request):
     if request.method == 'POST':
-        # Get property details from the request
         data = request.POST
-        username = data.get("user")
-        sale_type = data.get("saleType")  # Get saleType from the request
-        
-        # Find the user by username in the users collection
-        user = users_collection.find_one({"username": username})
-        if user is None:
-            return JsonResponse({"error": "User not found"}, status=404)
-        
-        # Get the user's ID and attach it to the property data
-        user_id = user["_id"]
+        sale_type = data.get("saleType") 
+        if(data.get("user")):
+            username = data.get("user")
+            user = users_collection.find_one({"username": username})
+            if user is None:
+                return JsonResponse({"error": "User not found"}, status=404)
 
-        # Get uploaded images
+            user_id = user["_id"]
+        else:
+            user_id = data.get("user_id")
         images = request.FILES.getlist('images')
-        
-        # Prepare the property data
+        image_urls = []
+        for image in images:
+            file_name = default_storage.save('property_images/' + image.name, ContentFile(image.read()))
+            image_url = default_storage.url(file_name)
+            image_urls.append(image_url)
+
         property_data = {
             'title': data.get('title'),
             'description': data.get('description'),
-            'price': data.get('price'),
             'property_type': data.get('property_type'),
             'bedrooms': data.get('bedrooms'),
             'bathrooms': data.get('bathrooms'),
@@ -245,9 +275,9 @@ def upload_property(request):
             'city': data.get('city'),
             'state': data.get('state'),
             'country': data.get('country'),
-            'saleType': sale_type,  # Add saleType to the property data
-            'images': [image.name for image in images],  # Store the image paths
-            'user_id': user_id,  # Store the user_id in the property data
+            'saleType': sale_type,  
+            'images': image_urls, 
+            'user_id': user_id,  
             'stories':data.get('stories'),
             'main_road':data.get('main_road'),
             'guest_room':data.get('guest_room'),
@@ -257,27 +287,23 @@ def upload_property(request):
             'parking':data.get('parking'),
             'prefarea':data.get('prefarea')
         }
-        
-        # pf=PolynomialFeatures()
-        # X_Test Parameters for our Regression Model.
-        Model_parameters=[property_data["square_feet"],property_data['bedrooms'],property_data["bathrooms"],property_data["stories"],property_data["main_road"],property_data["guest_room"],property_data['basement'],property_data['hotwater_heating'],property_data['airconditioning'],property_data['parking'],property_data['prefarea']]
-        Model_parameters=pd.Series(Model_parameters)
-        Model_parameters=pd.to_numeric(Model_parameters)
-        # Model_parameters=np.array(pf.fit_transform(Model_parameters), dtype=np.float64)
-        # for i in range(len(Model_parameters)):
-        #     Model_parameters[i]=int(Model_parameters[i])
-        
-        # y = ''.join(map(str, Model_parameters))
-        # for i in range(len(y)):
-        #     Model_parameters[i]=int(float(y[i]))
-        # Model_parameters = int(float(y))
-        PriceModel=joblib.load("C:/Users/jaypa/OneDrive/Desktop/HorizonX-Group/HorizonX-GroupProject/Backend/myapp/horizonx/saved-models/Horizon_Model.joblib")
-        modelSellPrice=PriceModel.predict([Model_parameters])
-        modelSellPrice=int(modelSellPrice)
-        # Insert the property data into MongoDB
-        property_collection.insert_one(property_data)
+        if(data.get('price')):
+            property_data['price'] = data.get("price")
+            property_collection.insert_one(property_data)
+            return JsonResponse({'message': 'Property uploaded successfully!'}, status=201)
+        else:
 
-        return JsonResponse({'message': 'Property uploaded successfully!','priceHelp':modelSellPrice}, status=200)
+            Model_parameters=[property_data["square_feet"],property_data['bedrooms'],property_data["bathrooms"],property_data["stories"],property_data["main_road"],property_data["guest_room"],property_data['basement'],property_data['hotwater_heating'],property_data['airconditioning'],property_data['parking'],property_data['prefarea']]
+            Model_parameters=pd.Series(Model_parameters)
+            Model_parameters=pd.to_numeric(Model_parameters)
+
+
+            PriceModel=joblib.load("horizonx\saved-models\Horizon_Model.joblib")
+            modelSellPrice=PriceModel.predict([Model_parameters])
+            modelSellPrice=int(modelSellPrice)
+            
+            property_data['user_id'] = str(property_data['user_id'])
+            return JsonResponse({'message': 'Property uploaded successfully!','priceHelp':modelSellPrice, 'property_data':property_data}, status=200)
 
 
     return JsonResponse({'error': 'Invalid request method'}, status=400)

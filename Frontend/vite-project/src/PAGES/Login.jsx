@@ -17,7 +17,7 @@ export default function Login() {
         data
       );
       if (response.status === 200) {
-        Cookies.set('username',response.data.username)
+        Cookies.set('username', response.data.username, { expires: 6 });
 
         setRedirect(true);
       } else if (response.status === 400) {
