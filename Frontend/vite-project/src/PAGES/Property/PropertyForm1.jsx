@@ -22,7 +22,7 @@ export default function PropertyForm1() {
     state: '',
     country: '',
     user: Cookies.get('username'),
-    saleType: 'sell',
+    saleType: 'buy',
     stories: '',
     main_road: '',
     guest_room: '',
@@ -34,6 +34,7 @@ export default function PropertyForm1() {
   });
 
   const [isRent, setIsRent] = useState(false);
+  const [isLastPrice, setIsLastPrice] = useState(false);
 
   const handleFileChange = (e) => {
     setImages([...e.target.files]);
@@ -69,28 +70,23 @@ console.log(formData)
         },
       });
       if (response.status == 200) {
-        const modelRedirecting = async () => {
-          
-          Cookies.set('model_params', response.data.priceHelp)
-          
-          console.log(response.data.property_data);
-          Cookies.set('data', JSON.stringify(response.data.property_data));
-          navigate("/pricehelp")
-        }
-        modelRedirecting()
+        setIsLastPrice(true)
+        setPropertyData(prevData => ({
+          ...prevData,
+          price: response.data.priceHelp
+        }));
       }else if(response.status == 201){
           navigate("/")
       }
     } catch (error) {
       console.error('Error submitting property:', error);
-      alert('Failed to submit property');
     }
   };
 
   return (
     <div className="max-w-2xl mx-auto p-8 bg-gray-100 shadow-lg rounded-lg">
       <h1 className="text-3xl font-bold mb-6 text-center text-gray-700">Submit Property</h1>
-      <form onSubmit={handleSubmit} className="space-y-4">
+      <form className="space-y-4">
         {/* Title Field */}
         <div>
           <label className="block text-gray-700 font-bold mb-2">Title</label>
@@ -127,12 +123,11 @@ console.log(formData)
             onChange={handleSaleTypeChange}
             className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
           >
-            <option value="sell">Sell</option>
+            <option value="buy">Sell</option>
             <option value="rent">Rent</option>
           </select>
         </div>
 
-        {/* Price Field */}
         {isRent?(<div>
           <label className="block text-gray-700 font-bold mb-2">Price</label>
           <div className="flex items-center">
@@ -400,12 +395,42 @@ console.log(formData)
           />
         </div>
 
-        <button
+          {isLastPrice?(<>
+            <div>
+          <label className="block text-gray-700 font-bold mb-2">Price</label>
+          <div className="flex items-center">
+            <input
+              type="number"
+              name="price"
+              value={propertyData.price}
+              onChange={handleInputChange}
+              placeholder="Price"
+              className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
+              required
+            />
+          </div>
+        </div>
+          </>):(<></>)}
+
+        {isRent|| isLastPrice?(<>
+          <button
           type="submit"
+          onClick={handleSubmit}
           className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 focus:outline-none"
         >
           Upload Property
         </button>
+        </>):(
+        <>
+          <button
+          type="submit"
+          onClick={handleSubmit}
+          className="w-full bg-black text-white py-2 px-4 rounded-lg hover:bg-gray-800 focus:outline-none"
+        >
+          Get Price
+        </button>
+        </>
+          )}
       </form>
     </div>
   );
