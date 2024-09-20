@@ -5,7 +5,7 @@ const FilterSidebar = ({ onFilterChange }) => {
   const [bedrooms, setBedrooms] = useState(1); // Single value
   const [bathrooms, setBathrooms] = useState(1); // Single value
   const [rating, setRating] = useState(1); // Single value
-  const [stories, setStories] = useState(1); // Single value
+  const [stories, setStories] = useState(1); 
 
   const handleApplyFilters = () => {
     const filters = {

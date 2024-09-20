@@ -10,11 +10,8 @@ const UserProperties = () => {
   const [showModal, setShowModal] = useState(false);
   const [propertyToDelete, setPropertyToDelete] = useState(null);
   const navigate = useNavigate();
-
-  // Fetch username from cookies
   const username = Cookies.get('username');
 
-  // Fetch properties for the logged-in user
   useEffect(() => {
     const fetchProperties = async () => {
       try {
@@ -41,24 +38,17 @@ const UserProperties = () => {
       setLoading(false);
     }
   }, [username]);
-
-  // Navigate to property update form
   const handleUpdate = (propertyId) => {
     navigate(`/update/${propertyId}`);
   };
-
-  // Navigate to the image update form
   const handleUpdateImages = (propertyId) => {
     navigate(`/updateImages/${propertyId}`);
   };
 
-  // Show modal for delete confirmation
   const handleDeleteClick = (propertyId) => {
     setPropertyToDelete(propertyId);
     setShowModal(true);
   };
-
-  // Confirm delete
   const handleConfirmDelete = async () => {
     try {
       await axios.delete(`http://127.0.0.1:8000/api/deleteProperty/${propertyToDelete}/`);
@@ -71,7 +61,6 @@ const UserProperties = () => {
     setPropertyToDelete(null);
   };
 
-  // Cancel delete
   const handleCancelDelete = () => {
     setShowModal(false);
     setPropertyToDelete(null);

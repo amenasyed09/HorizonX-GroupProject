@@ -18,7 +18,7 @@ const PropertyUpdateForm = () => {
     city: '',
     state: '',
     country: '',
-    saleType: 'buy', // Default to "buy"
+    saleType: 'buy', 
     stories: '',
     main_road: '',
     guest_room: '',
@@ -33,8 +33,10 @@ const PropertyUpdateForm = () => {
 
     const fetchData = async () => {
       try {
+
         const response = await axios.get(`http://127.0.0.1:8000/api/property/${propertyId}`);
         setFormData(response.data); 
+      
       } catch (error) {
         console.error('Error fetching property data', error);
       }

@@ -55,24 +55,6 @@ const PropertyDetailPage = () => {
         <p className="text-gray-600 mb-4">Listing Date: {new Date(property.listing_date).toLocaleDateString()}</p>
       </div>
 
-      {/* Inquiry Form */}
-      <div className="inquiry mt-8">
-        <p>Any Questions? Fill out this form:</p>
-        <div className="form-container">
-          <form onSubmit={(e) => e.preventDefault()}>
-            <label htmlFor="name" className="label">Name:</label>
-            <input type="text" id="name" className="input" />
-
-            <label htmlFor="email" className="label">Email:</label>
-            <input type="email" id="email" className="input" />
-
-            <label htmlFor="question" className="label">Question:</label>
-            <input type="text" id="question" className="input" />
-
-            <button type="submit" className="submit-button">Submit</button>
-          </form>
-        </div>
-      </div>
     </div>
   );
 };

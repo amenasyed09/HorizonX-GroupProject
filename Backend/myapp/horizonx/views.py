@@ -15,9 +15,7 @@ from django.core.files.storage import default_storage
 from django.core.files.base import ContentFile
 import joblib
 import pandas as pd
-import logging
 
-logger = logging.getLogger(__name__)
 
 client = MongoClient("mongodb://localhost:27017")
 db = client.horizonx
@@ -189,28 +187,29 @@ def get_property_by_id(request, propertyId):
 @csrf_exempt
 @require_http_methods(['PATCH'])
 def update_property_images(request, propertyId):
-    if request.method == 'PATCH':
-        logger.info('Request received for propertyId: %s', propertyId)
-        if 'images' in request.FILES:
-            images = request.FILES.getlist('images')
-            image_urls = []
-            for image in images:
-                file_name = default_storage.save('property_images/' + image.name, ContentFile(image.read()))
-                image_url = default_storage.url(file_name)
-                image_urls.append(image_url)
-                logger.info('Image saved: %s', image_url)
-        if 'removedImages' in request.POST:
-            removed_images = json.loads(request.POST.get('removedImages'))
-            for image_path in removed_images:
-                file_path = os.path.join(settings.MEDIA_ROOT, image_path)
-                try:
-                    os.remove(file_path)
-                    logger.info('Removed image: %s', file_path)
-                except FileNotFoundError:
-                    logger.warning('Image not found for removal: %s', file_path)
+    # if request.method == 'PATCH':
+    #     logger.info('Request received for propertyId: %s', propertyId)
+    #     if 'images' in request.FILES:
+    #         images = request.FILES.getlist('images')
+    #         image_urls = []
+    #         for image in images:
+    #             file_name = default_storage.save('property_images/' + image.name, ContentFile(image.read()))
+    #             image_url = default_storage.url(file_name)
+    #             image_urls.append(image_url)
+    #             logger.info('Image saved: %s', image_url)
+    #     if 'removedImages' in request.POST:
+    #         removed_images = json.loads(request.POST.get('removedImages'))
+    #         for image_path in removed_images:
+    #             file_path = os.path.join(settings.MEDIA_ROOT, image_path)
+    #             try:
+    #                 os.remove(file_path)
+    #                 logger.info('Removed image: %s', file_path)
+    #             except FileNotFoundError:
+    #                 logger.warning('Image not found for removal: %s', file_path)
 
-        return JsonResponse({'message': 'Images updated successfully'})
-    return JsonResponse({'error': 'Invalid request method'}, status=405)
+    #     return JsonResponse({'message': 'Images updated successfully'})
+    # return JsonResponse({'error': 'Invalid request method'}, status=405)
+    pass
 
 
 @csrf_exempt
@@ -237,7 +236,6 @@ def update_property(request, propertyId):
 
     except Exception as e:
         return JsonResponse({"error": str(e)}, status=500)
-
 
 @csrf_exempt
 @require_http_methods(['POST'])

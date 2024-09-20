@@ -75,9 +75,9 @@ const Footer = () => {
                 <div className="footer-section resources">
                     <h4>Resources</h4>
                     <ul>
-                        <li><a href="/rent">Homes for Rent</a></li>
-                        <li><a href="/sell">Homes for Sale</a></li>
-                        <li><a href="/sold">Sold Homes</a></li>
+                        <li><a href="/getAllProperties/rent">Homes for Rent</a></li>
+                        <li><a href="/getAllProperties/buy">Homes for Sale</a></li>
+                        <li><a href="/userProperties">Your Property Listings</a></li>
                         <li><a href="#trends">Market Trends</a></li>
                     </ul>
                 </div>

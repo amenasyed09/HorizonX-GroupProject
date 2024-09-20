@@ -145,13 +145,11 @@ console.log(formData)
               className="w-full px-4 py-2 border border-gray-300 rounded-lg focus:outline-none focus:border-black"
               required
             />
-            {/* Show "/per month" when "Rent" is selected */}
+    
             {isRent && <span className="ml-2 text-gray-500">/per month</span>}
           </div>
         </div>):(<></>)}
         
-
-        {/* Other fields */}
         <div>
           <label className="block text-gray-700 font-bold mb-2">Property Type</label>
           <input

@@ -20,13 +20,10 @@ const ImageUpdateForm = () => {
     };
     fetchImages();
   }, [propertyId]);
-
-  // Handle new image uploads
   const handleFileChange = (e) => {
     setNewImages([...e.target.files]);
   };
 
-  // Handle existing image removal
   const handleRemoveImage = (image) => {
     setRemovedImages([...removedImages, image]);
     setExistingImages(existingImages.filter((img) => img !== image));
@@ -34,7 +31,6 @@ const ImageUpdateForm = () => {
 
   const handleSubmit = async (event) => {
     event.preventDefault();
-    
     try {
       const formData = new FormData();
       for (let i = 0; i < newImages.length; i++) {

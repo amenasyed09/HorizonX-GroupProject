@@ -37,6 +37,12 @@ const Navbar = () => {
         <li>
           <Link to={'/getAllProperties/rent'}>Rent</Link>
         </li>
+        <li>
+  {
+    isLoggedIn ? (<Link to={'/userProperties'} style={{ pointerEvents: 'auto' }}>Listed-Properties</Link>) : ""
+  }
+</li>
+
       </ul>
       <div className="navbar-buttons">
         {isLoggedIn ? (
